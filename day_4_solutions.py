@@ -1,4 +1,5 @@
 from base_aoc_day_solutions import *
+import pyperclip
 
 # https://adventofcode.com/2025/day/4
 
@@ -10,6 +11,7 @@ class Grid():
         self.rows = []
         with open(input_file, 'r') as f:
             for row in f.readlines():
+                row = row.strip()
                 row_data = []
                 for entry in row:
                     row_data.append(entry)
@@ -32,7 +34,7 @@ class Grid():
         return None
     
     def get_top_right(self, x, y):
-        if x < self.row_length(y) - 2 and y > 0:
+        if x <= self.row_length(y) - 2 and y > 0:
             return self.rows[y-1][x+1]
         return None
     
@@ -42,22 +44,22 @@ class Grid():
         return None
     
     def get_right(self, x, y):
-        if x < self.row_length(y) - 2:
+        if x <= self.row_length(y) - 2:
             return self.rows[y][x+1]
         return None
     
     def get_bottom_left(self, x, y):
-        if x > 0 and y < self.col_height() - 2:
+        if x > 0 and y <= self.col_height() - 2:
             return self.rows[y+1][x-1]
         return None
 
     def get_bottom(self, x, y):
-        if y < self.col_height() - 2:
+        if y <= self.col_height() - 2:
             return self.rows[y+1][x]
         return None
     
     def get_bottom_right(self, x, y):
-        if x < self.row_length(y) - 2 and y < self.col_height() - 2:
+        if x <= self.row_length(y) - 2 and y <= self.col_height() - 2:
             return self.rows[y+1][x+1]
         return None
 
@@ -70,6 +72,7 @@ class Day4Solutions(BaseAoCDaySolutions):
         grid.init_from_input_file(self.input_file)
 
         rolls_count = 0
+        adjusted_ouput = ""
         for y in range(0, len(grid.rows)):
             for x in range(0, len(grid.rows[y])):
                 if grid.rows[y][x] == '@':
@@ -86,7 +89,16 @@ class Day4Solutions(BaseAoCDaySolutions):
 
                     if adj.count('@') < 4:
                         rolls_count += 1
+                        adjusted_ouput += 'x'
+                    else:
+                        adjusted_ouput += '@'
+                else:
+                    adjusted_ouput += grid.rows[y][x]
+            
+            adjusted_ouput += '\n'
 
+        pyperclip.copy(adjusted_ouput)
+        print(adjusted_ouput)
         return rolls_count
 
     def part_2(self):
