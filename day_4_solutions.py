@@ -62,6 +62,25 @@ class Grid():
         if x <= self.row_length(y) - 2 and y <= self.col_height() - 2:
             return self.rows[y+1][x+1]
         return None
+    
+    # For a given x/y point, get all adjacent values
+    def get_all_adj(self, x, y):
+        return [
+            self.get_top_left(x, y),
+            self.get_top(x, y),
+            self.get_top_right(x, y),
+            self.get_left(x, y),
+            self.get_right(x, y),
+            self.get_bottom_left(x, y),
+            self.get_bottom(x, y),
+            self.get_bottom_right(x, y),
+        ]
+    
+    # For a given x/y, see if this entry can be safely removed
+    # (Fewer than 4 rolls in adjacent spots)
+    def can_be_removed(self, x, y):
+        adj = self.get_all_adj(x, y)
+        return adj.count('@') < 4
 
 class Day4Solutions(BaseAoCDaySolutions):
     def __init__(self):
@@ -76,18 +95,7 @@ class Day4Solutions(BaseAoCDaySolutions):
         for y in range(0, len(grid.rows)):
             for x in range(0, len(grid.rows[y])):
                 if grid.rows[y][x] == '@':
-                    adj = [
-                        grid.get_top_left(x, y),
-                        grid.get_top(x, y),
-                        grid.get_top_right(x, y),
-                        grid.get_left(x, y),
-                        grid.get_right(x, y),
-                        grid.get_bottom_left(x, y),
-                        grid.get_bottom(x, y),
-                        grid.get_bottom_right(x, y),
-                    ]
-
-                    if adj.count('@') < 4:
+                    if grid.can_be_removed(x, y):
                         rolls_count += 1
                         adjusted_ouput += 'x'
                     else:
