@@ -81,6 +81,29 @@ class Grid():
     def can_be_removed(self, x, y):
         adj = self.get_all_adj(x, y)
         return adj.count('@') < 4
+    
+    # Manipulates self to remove all elgible rolls, then returns number removed
+    def remove_all_eligible_rolls(self):
+        removed_count = 0
+        new_rows = []
+        for y in range(0, len(self.rows)):
+            new_row = []
+            for x in range(0, len(self.rows[y])):
+                curr = self.rows[y][x]
+                if curr == '@':
+                    if self.can_be_removed(x, y):
+                        removed_count += 1
+                        new_row.append('.')
+                    else:
+                        new_row.append(curr)
+                else:
+                    new_row.append(curr)
+            new_rows.append(new_row)
+
+        # replace old rows with new ones
+        self.rows = new_rows
+        log_debug(f'Removed {removed_count} rolls')
+        return removed_count
 
 class Day4Solutions(BaseAoCDaySolutions):
     def __init__(self):
@@ -110,6 +133,17 @@ class Day4Solutions(BaseAoCDaySolutions):
         return rolls_count
 
     def part_2(self):
-        return 0
+        grid = Grid()
+        grid.init_from_input_file(self.input_file)
+
+        remove_count = grid.remove_all_eligible_rolls()
+        total_remove_count = remove_count
+        while (remove_count > 0):
+            remove_count = grid.remove_all_eligible_rolls()
+            total_remove_count += remove_count
+        
+        return total_remove_count
+
+
     
 Day4Solutions().run_solutions()
