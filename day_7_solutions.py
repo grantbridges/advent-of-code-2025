@@ -1,6 +1,66 @@
+import math
+from typing import List
 from base_aoc_day_solutions import *
 
 # https://adventofcode.com/2025/day/7
+
+class Day2Solver():
+    lines: List[str] = []
+    paths: List[List[int]] = [] # each path is an array of x indices - all paths should be same length
+
+    lines_count: int
+    line_length: int
+
+    def __init__(self):
+        self.lines = []
+        self.paths = []
+
+    def init_from_file(self, input_file: str):
+        self.lines = []
+        self.paths = []
+
+        with open (input_file, 'r') as f:
+            for line in f.readlines():
+                self.lines.append(line.strip())
+
+            # store out some lookup properties for ease of access later
+            self.lines_count = len(self.lines)
+            self.line_length = len(self.lines[0]) # all line lengths are the same
+
+    def calculate_all_paths(self):
+        # Starting x is on the "S" value of first line
+        x = self.lines[0].find('S')
+
+        path = [x]
+        self._move_to(1, x, path)
+
+    def _move_to(self, row_index: int, x: int, path: List[int]):
+        if row_index < self.lines_count:
+            line = self.lines[row_index]
+
+            if line[x] == '^':
+                # Found a split! Move to left and right
+                left_x = x - 1
+                right_x = x + 1
+                # (test data doesn't have ^ ever show up on the far edges, so not
+                # worrying about the literal edge cases here of x being out of bounds)
+
+                # Keep passing current path on down left route, but make a copy for right
+                left_path = path
+                right_path = path[:]
+
+                left_path.append(left_x)
+                right_path.append(right_x)
+
+                self._move_to(row_index + 1, left_x, left_path)
+                self._move_to(row_index + 1, right_x, right_path)
+            else:
+                # Keep heading down same direction
+                path.append(x)
+                self._move_to(row_index + 1, x, path)
+        else:
+            # Reached bottom! Add this path to our list of finished paths
+            self.paths.append(path)
 
 class Day7Solutions(BaseAoCDaySolutions):
     def __init__(self):
@@ -61,6 +121,10 @@ class Day7Solutions(BaseAoCDaySolutions):
         return split_count
 
     def part_2(self):
-        return 0
+        solver = Day2Solver()
+        solver.init_from_file(self.input_file)
+        solver.calculate_all_paths()
+
+        return len(solver.paths)
     
 Day7Solutions().run_solutions()
