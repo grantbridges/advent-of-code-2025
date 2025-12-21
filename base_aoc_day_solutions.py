@@ -8,6 +8,7 @@ class BaseAoCDaySolutions:
         self.day_number = day_number
 
         self.input_file = f'inputs/day_{self.day_number}.txt'
+        self.input_sample_file = f'inputs/day_{self.day_number}_sample.txt'
 
     def part_1(self):
         return -1
