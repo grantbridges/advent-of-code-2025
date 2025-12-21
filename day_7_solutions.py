@@ -93,7 +93,7 @@ class Day7Solutions(BaseAoCDaySolutions):
         solver = Day2Solver()
         solver.init_from_file(self.input_file)
         solver.calculate_all_paths()
-        return len(solver.path_count)
+        return solver.path_count
     
 #Day7Solutions().run_solutions()
 Day7Solutions().run_solution_part(2)
