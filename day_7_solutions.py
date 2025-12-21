@@ -39,7 +39,7 @@ class Day2Solver():
             line = self.lines[row_index]
 
             if line[x] == '^':
-                # Found a split! Move to left and right
+                # Found a splitter! Move to left and right
                 # (test data doesn't have ^ ever show up on the far edges, so not
                 # worrying about the literal edge cases here of x being out of bounds)
                 self._move_to(row_index + 1, x - 1)
@@ -48,7 +48,7 @@ class Day2Solver():
                 # Keep heading down same direction
                 self._move_to(row_index + 1, x)
         else:
-            # Reached bottom! Add this path to our list of finished paths
+            # Reached bottom! Increment found paths
             self.path_count += 1
 
 class Day7Solutions(BaseAoCDaySolutions):
