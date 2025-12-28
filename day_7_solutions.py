@@ -3,7 +3,7 @@ from base_aoc_day_solutions import *
 
 # https://adventofcode.com/2025/day/7
 
-class Day2Solver():
+class Day2RecursiveSolver():
     lines: List[str] = []
     lines_count: int
     line_length: int
@@ -88,12 +88,49 @@ class Day7Solutions(BaseAoCDaySolutions):
                 previous_line_beams[:] = [beam for beam in previous_line_beams if beam not in splitters]
 
         return split_count
+    
+    def merge_new_entry_into_beams(self, line_beams_dict: dict, col_index: int, paths: int):
+        if col_index in line_beams_dict:
+            # simply merge paths count
+            line_beams_dict[col_index] += paths
+        else:
+            # initialize this entry
+            line_beams_dict[col_index] = paths
+
 
     def part_2(self):
-        solver = Day2Solver()
-        solver.init_from_file(self.input_file)
-        solver.calculate_all_paths()
-        return solver.path_count
+        with open(self.input_file, 'r') as f:
+            lines = f.readlines()
+
+            first_line = lines[0].strip()
+            start_x = first_line.find('S')
+
+            # initialize tracking of # of paths in each line
+            # [key: value] pairs of [column index: # of paths currently following it]
+            previous_line_beams: dict = {
+                start_x: 1
+            }
+
+            for i in range(1, len(lines)):
+                line = lines[i].strip()
+
+                curr_line_beams: dict = {}
+
+                for (col_index, paths) in previous_line_beams.items():
+                    if line[col_index] == '^':
+                        # split!
+                        self.merge_new_entry_into_beams(curr_line_beams, col_index - 1, paths)
+                        self.merge_new_entry_into_beams(curr_line_beams, col_index + 1, paths)
+                    else:
+                        # no collision - extend straight down
+                        self.merge_new_entry_into_beams(curr_line_beams, col_index, paths)
+                
+                # reassign previous line beams
+                previous_line_beams = curr_line_beams
+
+        paths_count = sum(previous_line_beams.values())
+
+        return paths_count
     
 #Day7Solutions().run_solutions()
 Day7Solutions().run_solution_part(2)
