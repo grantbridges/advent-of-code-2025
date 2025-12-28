@@ -1,9 +1,11 @@
 from typing import List
+from collections import defaultdict
 from base_aoc_day_solutions import *
 
 # https://adventofcode.com/2025/day/7
 
 class Day2RecursiveSolver():
+    # (!) Abandoned using this approach - it'd work, but would take ~32 days of computing to finish solving
     lines: List[str] = []
     lines_count: int
     line_length: int
@@ -58,79 +60,69 @@ class Day7Solutions(BaseAoCDaySolutions):
     def part_1(self):
         split_count = 0
         with open(self.input_file, 'r') as f:
-            lines = f.readlines()
+            # track column indices where beams existed on previous line
+            prev_line_beams: List[int] = []
 
-            first_line = lines[0].strip()
-            start_x = first_line.find('S')
+            for row_index, line in enumerate(f):
+                line = line.strip()
 
-            # track index of each beam
-            previous_line_beams = [start_x]
+                curr_line_beams = set()
+                curr_line_splitters = set()
 
-            for i in range(1, len(lines)):
-                line = lines[i].strip()
-                new_beams = set()
-                splitters = set()
-                for b in previous_line_beams:
-                    if line[b] == '^':
-                        # split!
-                        split_count += 1
-                        splitters.add(b)
-                        if b > 0:
-                            new_beams.add(b-1)
-                        if b < len(line) - 1:
-                            new_beams.add(b+1)
-                    else:
-                        # no collision - extend straight down
-                        new_beams.add(b)
-                previous_line_beams = list(new_beams)
+                if row_index == 0:
+                    # first line - starting column is at 'S'
+                    start_col_index = line.find('S')
+                    curr_line_beams.add(start_col_index)
+                else:
+                    for col_index in prev_line_beams:
+                        if line[col_index] == '^':
+                            # split!
+                            split_count += 1
+                            curr_line_splitters.add(col_index)
+                            curr_line_beams.add(col_index-1)
+                            curr_line_beams.add(col_index+1)
+                        else:
+                            # no collision - extend straight down
+                            curr_line_beams.add(col_index)
 
-                # can't have a beam on a splitter
-                previous_line_beams[:] = [beam for beam in previous_line_beams if beam not in splitters]
+                # can't have a beam on a splitter - filter out before reassigning current line beams to previous
+                prev_line_beams[:] = [beam for beam in curr_line_beams if beam not in curr_line_splitters]
 
         return split_count
-    
-    def merge_new_entry_into_beams(self, line_beams_dict: dict, col_index: int, paths: int):
-        if col_index in line_beams_dict:
-            # simply merge paths count
-            line_beams_dict[col_index] += paths
-        else:
-            # initialize this entry
-            line_beams_dict[col_index] = paths
-
 
     def part_2(self):
+        total_paths_count = 0
         with open(self.input_file, 'r') as f:
-            lines = f.readlines()
+            # use a dictionary to track number of paths currently following 
+            # each column downward on previous line
+            # key: column index; value: # of paths currently following it
+            prev_line_paths = defaultdict(int)
 
-            first_line = lines[0].strip()
-            start_x = first_line.find('S')
+            for row_index, line in enumerate(f):
+                line = line.strip()
 
-            # initialize tracking of # of paths in each line
-            # [key: value] pairs of [column index: # of paths currently following it]
-            previous_line_beams: dict = {
-                start_x: 1
-            }
+                curr_line_paths = defaultdict(int)
 
-            for i in range(1, len(lines)):
-                line = lines[i].strip()
+                if row_index == 0:
+                    # first line - starting column is at 'S'
+                    start_col_index = line.find('S')
+                    curr_line_paths[start_col_index] = 1
+                else:
+                    # iterate over each entry in prev line's paths to build new paths
+                    for (col_index, paths_count) in prev_line_paths.items():
+                        if line[col_index] == '^':
+                            # split!
+                            curr_line_paths[col_index - 1] += paths_count
+                            curr_line_paths[col_index + 1] += paths_count
+                        else:
+                            # no collision - extend straight down
+                            curr_line_paths[col_index] += paths_count
+                        
+                # reassign current line paths to previous and keep iterating
+                prev_line_paths = curr_line_paths
 
-                curr_line_beams: dict = {}
+            total_paths_count = sum(prev_line_paths.values())
 
-                for (col_index, paths) in previous_line_beams.items():
-                    if line[col_index] == '^':
-                        # split!
-                        self.merge_new_entry_into_beams(curr_line_beams, col_index - 1, paths)
-                        self.merge_new_entry_into_beams(curr_line_beams, col_index + 1, paths)
-                    else:
-                        # no collision - extend straight down
-                        self.merge_new_entry_into_beams(curr_line_beams, col_index, paths)
-                
-                # reassign previous line beams
-                previous_line_beams = curr_line_beams
-
-        paths_count = sum(previous_line_beams.values())
-
-        return paths_count
+        return total_paths_count
     
-#Day7Solutions().run_solutions()
-Day7Solutions().run_solution_part(2)
+Day7Solutions().run_solutions()
