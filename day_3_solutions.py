@@ -6,80 +6,7 @@ class Day3Solutions(BaseAoCDaySolutions):
     def __init__(self):
         BaseAoCDaySolutions.__init__(self, 3)
 
-    def part_1(self):
-        joltages = []
-        with open(self.input_file, 'r') as f:
-            line_count = 0
-            for bank in f.readlines():
-                bank = bank.strip()
-                line_count += 1
-
-                #joltage_value = self.get_bank_joltage_v0(bank)
-                joltage_value = self.get_bank_joltage_v3(bank, 2)
-                # log_debug(f'{line_count}: {joltage_value}')
-                joltages.append(joltage_value)
-        return sum(joltages)
-    
-    def get_bank_joltage_v0(self, bank):
-        # track index of two biggest values
-        largest_val_1_index = -1
-        largest_val_2_index = -1
-
-        # first pass to look for biggest number
-        temp_biggest_val = -1
-        for index in range(0, len(bank) - 1): # exclude last value from check
-            current = int(bank[index])
-            if current > temp_biggest_val:
-                temp_biggest_val = current
-                largest_val_1_index = index
-            
-        # second pass to look for next biggest number
-        temp_biggest_val = -1
-        for index in range(largest_val_1_index + 1, len(bank)):
-            current = int(bank[index])
-            if current > temp_biggest_val:
-                temp_biggest_val = current
-                largest_val_2_index = index
-        
-        return int(f'{bank[largest_val_1_index]}{bank[largest_val_2_index]}')
-    
-    def get_bank_joltage_v1(self, bank, battery_count):
-        out = []
-        for b in bank:
-            curr = int(b)
-            if len(out) < battery_count:
-                # simply add this value in
-                out.append(curr)
-            else:
-                check_index = len(out) - 1
-                check_value = out[check_index]
-                while curr > check_value:
-                    out[check_index] = curr
-                    curr = check_value
-                    check_index -= 1
-                    if check_index >= 0:
-                        check_value = out[check_index]
-                    else:
-                        break # passed start of our value - move on
-
-        return int(''.join(map(str, out))) # merge output array into a single number
-    
-    def get_bank_joltage_v2(self, bank, target):
-        out = []
-        for b in bank[::-1]: # reverse iterate
-            curr = int(b)
-
-            if len(out) < target:
-                out.insert(0, curr) # prepend
-            else:
-                if curr >= out[0]:
-                    out.insert(0, curr) # prepend
-                    out.pop() # remove last
-
-
-        return int(''.join(map(str, out))) # merge output array into a single number
-    
-    def get_bank_joltage_v3(self, bank, target):
+    def get_bank_joltage(self, bank, target):
         out = [-1] * target # tracks indices of each number we want to keep
 
         full_number = ''
@@ -98,19 +25,22 @@ class Day3Solutions(BaseAoCDaySolutions):
         
         return int(full_number)
 
+    def part_1(self):
+        joltages = []
+        with open(self.input_file, 'r') as f:
+            for bank in f:
+                bank = bank.strip()
+                joltage_value = self.get_bank_joltage(bank, 2)
+                joltages.append(joltage_value)
+                
+        return sum(joltages)
 
     def part_2(self):
         joltages = []
-        battery_count = 12
         with open(self.input_file, 'r') as f:
-            line_count = 0
-            for bank in f.readlines():
+            for bank in f:
                 bank = bank.strip()
-                line_count += 1
-
-                #joltage_value = self.get_bank_joltage_v0(bank)
-                joltage_value = self.get_bank_joltage_v3(bank, 12)
-                # log_debug(f'{line_count}: {joltage_value}')
+                joltage_value = self.get_bank_joltage(bank, 12)
                 joltages.append(joltage_value)
 
         return sum(joltages)

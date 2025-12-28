@@ -25,7 +25,7 @@ class Box():
     def get_boxes_from_file(input_file):
         boxes = List[Box]
         with open (input_file, 'r') as f:
-            for line in f.readlines():
+            for line in f:
                 boxes.append(Box.create_from_text(line))
         return boxes
 

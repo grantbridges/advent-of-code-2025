@@ -10,7 +10,7 @@ class Day1Solutions(BaseAoCDaySolutions):
         current_pos = 50
         zeros_count = 0
         with open(self.input_file, 'r') as f:
-            for line in f.readlines():
+            for line in f:
                 dir = str(line[0]) # L or R
                 dist = int(line[1:]) # number after direction
 
@@ -33,7 +33,7 @@ class Day1Solutions(BaseAoCDaySolutions):
         current_pos = 50
         zeros_count = 0
         with open(self.input_file, 'r') as f:
-            for line in f.readlines():
+            for line in f:
                 dir = str(line[0]) # L or R
                 dist = int(line[1:]) # number after direction
 

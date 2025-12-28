@@ -26,7 +26,7 @@ class Util():
     def read_id_ranges_from_file(input_file) -> List[IdRange]:
         ranges: List[IdRange] = []
         with open(input_file, 'r') as f:
-            for line in f.readlines():
+            for line in f:
                 line = line.strip()
                 if '-' in line:
                     ids = line.split('-')
@@ -37,7 +37,7 @@ class Util():
     def read_available_ids_from_file(input_file) -> List[int]:
         ids: List[int] = []
         with open(input_file, 'r') as f:
-            for line in f.readlines():
+            for line in f:
                 line = line.strip()
                 if line != '' and '-' not in line:
                     ids.append(int(line))

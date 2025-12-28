@@ -32,24 +32,17 @@ class ProductRange():
             id_str = str(id)
             id_length = len(id_str)
             
-            # get each number that the total length is evenly divisible by
-            lens_to_check = []
+            # check each divisor that the total id length is evenly divisible by
             for i in range(1, id_length // 2 + 1):
-                if id_length % i == 0:
-                    lens_to_check.append(i)
-            
-            # for each of these lengths, divide up the string
-            for length in lens_to_check:
-                splits = textwrap.wrap(id_str, length)
-
-                # now we've divided up the string into equal parts
-                # see if all these parts equal the first in this split
-                all_match = all(x == splits[0] for x in splits)
-                if all_match:
-                    #log_debug(f'Invalid Id: {id}')
-                    invalid_ids.append(id)
-                    # we found a match so no need to check the other lengths
-                    break 
+                if id_length % i != 0:
+                    # not evenly divisible - move on
+                    continue
+                else:
+                    # evenly divisible - check if all parts are equal to flag as invalid
+                    if id_str[:i] * (id_length // i) == id_str:
+                        invalid_ids.append(id)
+                        # we found a match so no need to check the other lengths
+                        break
 
         return invalid_ids
     

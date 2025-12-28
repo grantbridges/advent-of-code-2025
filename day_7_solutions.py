@@ -24,7 +24,7 @@ class Day2RecursiveSolver():
         self.path_count = 0
 
         with open (input_file, 'r') as f:
-            for line in f.readlines():
+            for line in f:
                 self.lines.append(line.strip())
 
             # store out some lookup properties for ease of access later

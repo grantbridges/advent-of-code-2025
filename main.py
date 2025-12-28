@@ -14,4 +14,21 @@ Collect stars by solving puzzles. Two puzzles will be made available on each day
 the second puzzle is unlocked when you complete the first. Each puzzle grants one star. Good luck!
 '''
 
+import time
+
+start_time = time.perf_counter()
+
+# run all solutions - each day file automatically runs its own solutions,
+# so simply importing them here will trigger running
 from day_1_solutions import *
+from day_2_solutions import *
+from day_3_solutions import *
+from day_4_solutions import *
+from day_5_solutions import *
+from day_6_solutions import *
+from day_7_solutions import *
+# add more solutions here as desired
+
+end_time = time.perf_counter()
+elapsed_time = (end_time - start_time) * 1000
+log_info(f"-- Total Time: {elapsed_time:.3f}ms")

@@ -1,5 +1,4 @@
 from base_aoc_day_solutions import *
-import pyperclip
 
 # https://adventofcode.com/2025/day/4
 
@@ -10,7 +9,7 @@ class Grid():
     def init_from_input_file(self, input_file):
         self.rows = []
         with open(input_file, 'r') as f:
-            for row in f.readlines():
+            for row in f:
                 row = row.strip()
                 row_data = []
                 for entry in row:
@@ -102,7 +101,6 @@ class Grid():
 
         # replace old rows with new ones
         self.rows = new_rows
-        log_debug(f'Removed {removed_count} rolls')
         return removed_count
 
 class Day4Solutions(BaseAoCDaySolutions):
@@ -114,22 +112,12 @@ class Day4Solutions(BaseAoCDaySolutions):
         grid.init_from_input_file(self.input_file)
 
         rolls_count = 0
-        adjusted_ouput = ""
         for y in range(0, len(grid.rows)):
             for x in range(0, len(grid.rows[y])):
                 if grid.rows[y][x] == '@':
                     if grid.can_be_removed(x, y):
                         rolls_count += 1
-                        adjusted_ouput += 'x'
-                    else:
-                        adjusted_ouput += '@'
-                else:
-                    adjusted_ouput += grid.rows[y][x]
-            
-            adjusted_ouput += '\n'
 
-        pyperclip.copy(adjusted_ouput)
-        print(adjusted_ouput)
         return rolls_count
 
     def part_2(self):
@@ -143,7 +131,5 @@ class Day4Solutions(BaseAoCDaySolutions):
             total_remove_count += remove_count
         
         return total_remove_count
-
-
     
 Day4Solutions().run_solutions()
