@@ -4,7 +4,7 @@ from base_aoc_day_solutions import *
 
 # https://adventofcode.com/2025/day/7
 
-class Day2RecursiveSolver():
+class Day7RecursiveSolver():
     # (!) Abandoned using this approach - it'd work, but would take ~32 days of computing to finish solving
     lines: List[str] = []
     lines_count: int
